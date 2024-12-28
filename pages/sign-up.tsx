@@ -6,6 +6,7 @@ import axios from 'axios';
 
 const SignUp: React.FC = () => {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'client' | 'owner'>('client');
@@ -24,6 +25,7 @@ const SignUp: React.FC = () => {
     try {
       setError('');
       const response = await axios.post('/api/auth/signup', {
+        name,
         phone,
         password,
         role,
@@ -51,6 +53,15 @@ const SignUp: React.FC = () => {
         <h1 className="text-2xl font-bold text-center mb-4">
           Sign Up as {role === 'owner' ? 'Cafe Owner' : 'Cafe Client'}
         </h1>
+
+        <label>Name</label>
+      <input
+        className="w-full mb-4 p-2 border border-gray-300 rounded"
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="e.g. Mark"
+      />
 
         <label className="block mb-2 text-gray-700">Phone Number</label>
         <input

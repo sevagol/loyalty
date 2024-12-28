@@ -1,3 +1,4 @@
+// pages/api/loyalty/requestMark.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/dbConnect';
 import MarkRequest from '@/models/MarkRequest';
@@ -17,20 +18,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const decoded: any = verifyToken(token);
       const userId = decoded.userId;
 
-      // Create pending request
-      const newRequest = await MarkRequest.create({ userId, status: 'pending' });
+      const { isFreeCoffee } = req.body; // e.g. true or false
+      const reqType = isFreeCoffee ? 'freeCoffee' : 'mark';
 
-      return res.status(201).json({ message: 'Mark request created', requestId: newRequest._id });
+      const newRequest = await MarkRequest.create({
+        userId,
+        status: 'pending',
+        type: reqType,
+      });
+
+      return res.status(201).json({
+        message: isFreeCoffee
+          ? 'Free coffee request created'
+          : 'Mark request created',
+        requestId: newRequest._id,
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: 'Server error' });
     }
   }
 
-  // For Owner: GET to list all pending requests
+  // GET -> list mark requests if needed
   if (req.method === 'GET') {
     try {
-      const requests = await MarkRequest.find({ status: 'pending' });
+      const requests = await MarkRequest.find({ status: 'pending' })
+      .populate('userId', 'name');
       return res.status(200).json(requests);
     } catch (err) {
       console.error(err);
@@ -38,5 +51,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  return res.status(405).end(); // Method Not Allowed
+  return res.status(405).end(); 
 }

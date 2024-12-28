@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await dbConnect();
-    const { phone, password, role, code } = req.body;
+    const { name, phone, password, role, code } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ phone });
@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Create new user
     const newUser = new User({
+      name,
       phone,
       password: hashedPassword,
       role: role || 'client',

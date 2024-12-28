@@ -1,20 +1,19 @@
+// models/User.ts
 import mongoose, { Schema, Model, Document } from 'mongoose';
 
 export interface IUser extends Document {
+  name: string;            // <-- NEW
   phone: string;
   password: string;
   role: 'client' | 'owner';
-  // Each 6th coffee is free, so you might store how many coffees the user has
-  // or how many marks they've earned, and track the free coffee usage.
   loyaltyPoints: number;
   walletBalance: number;
-
-  // For referrals
-  invitedBy?: mongoose.Types.ObjectId; // The user who invited this one
-  invites: mongoose.Types.ObjectId[];  // List of users invited by this user
+  invitedBy?: mongoose.Types.ObjectId;
+  invites: mongoose.Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>({
+  name: { type: String, required: true }, // <-- NEW
   phone: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['client', 'owner'], required: true },

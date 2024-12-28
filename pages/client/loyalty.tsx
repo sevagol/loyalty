@@ -13,10 +13,10 @@ const LoyaltyPage: React.FC = () => {
 
   const fetchUserInfo = async () => {
     try {
+      setStatus('');
       const token = localStorage.getItem('token');
       if (!token) {
-        setStatus('No token found. Please sign in.');
-        return;
+        return setStatus('No token found. Please sign in.');
       }
       const { data } = await axios.get('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
@@ -27,8 +27,9 @@ const LoyaltyPage: React.FC = () => {
     }
   };
 
-  const handleRequestMark = async () => {
+  const handleRequest = async (isFreeCoffee: boolean) => {
     try {
+      setStatus('');
       const token = localStorage.getItem('token');
       if (!token) {
         return setStatus('No token found. Please sign in.');
@@ -36,12 +37,12 @@ const LoyaltyPage: React.FC = () => {
 
       const { data } = await axios.post(
         '/api/loyalty/requestMark',
-        {},
+        { isFreeCoffee }, // pass flag to server
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStatus(data.message);
     } catch (error: any) {
-      setStatus(error.response?.data?.error || 'Error requesting mark');
+      setStatus(error.response?.data?.error || 'Error requesting');
     }
   };
 
@@ -51,28 +52,34 @@ const LoyaltyPage: React.FC = () => {
     setStatus('Loyalty points refreshed!');
   };
 
+  const isEligibleForFreeCoffee = loyaltyPoints >= 5;
+
   return (
     <ClientLayout>
-      <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4">Loyalty Program</h1>
-        <p className="text-gray-700 mb-6">Every 6th coffee is free!</p>
-
-        <div className="mb-4">
-          <strong className="block text-lg mb-1">
-            Current Loyalty Marks: {loyaltyPoints}
-          </strong>
-          <p className="text-sm text-gray-600">
-            You need <strong>{6 - loyaltyPoints}</strong> more mark
-            {6 - loyaltyPoints === 1 ? '' : 's'} to get a free coffee!
-          </p>
+      <div className="max-w-md mx-auto bg-white p-6 rounded shadow space-y-4">
+        <h1 className="text-2xl font-bold">Loyalty Program</h1>
+        <p>Every 6th coffee is free!</p>
+        <div>
+          <strong>Loyalty Marks: {loyaltyPoints}</strong>
+          <p>You need {5 - loyaltyPoints} mark(s) to a free coffee!</p>
         </div>
 
-        <button
-          onClick={handleRequestMark}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded mb-3"
-        >
-          Request Coffee Mark
-        </button>
+        {isEligibleForFreeCoffee ? (
+          <button
+            onClick={() => handleRequest(true)} // free coffee
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded"
+          >
+            Get Free Coffee
+          </button>
+        ) : (
+          <button
+            onClick={() => handleRequest(false)} // normal mark
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          >
+            Request Coffee Mark
+          </button>
+        )}
+
         <button
           onClick={handleRefresh}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded"
@@ -80,7 +87,7 @@ const LoyaltyPage: React.FC = () => {
           Refresh My Points
         </button>
 
-        <p className="mt-4 text-red-500">{status}</p>
+        {status && <p className="text-red-500">{status}</p>}
       </div>
     </ClientLayout>
   );

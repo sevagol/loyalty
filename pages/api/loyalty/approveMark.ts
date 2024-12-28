@@ -11,52 +11,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await dbConnect();
 
-    // In production, you should verify the user has "owner" role
+    // Optionally, verify role === 'owner'
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
+
     const token = authHeader.split(' ')[1];
     const decoded: any = verifyToken(token);
 
-    // e.g. if (decoded.role !== 'owner') return res.status(403).json({ error: 'Forbidden' });
-
-    const { requestId } = req.body;
+    const { requestId, action } = req.body; // action: 'approve' or 'reject'
 
     const markRequest = await MarkRequest.findById(requestId);
     if (!markRequest || markRequest.status !== 'pending') {
       return res.status(404).json({ error: 'Request not found or not pending' });
     }
 
-    // Approve the request
-    markRequest.status = 'approved';
-    await markRequest.save();
+    if (action === 'approve') {
+      markRequest.status = 'approved';
+      await markRequest.save();
 
-    // Update user's loyaltyPoints
-    const user = await User.findById(markRequest.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    user.loyaltyPoints += 1;
-    if (user.loyaltyPoints >= 6) {
-      // They get a free coffee, so reset or subtract 6 points
-      user.loyaltyPoints -= 6;
-    }
-
-    // Referral logic: Add 2 shekels to the user who invited this user
-    if (user.invitedBy) {
-        const referrer = await User.findById(user.invitedBy);
-        if (referrer) {
-          referrer.walletBalance += 2;
-          await referrer.save();
-        }
+      // If 'approve' -> update user’s loyaltyPoints
+      const user = await User.findById(markRequest.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
       }
-      
 
-    await user.save();
+      if (markRequest.type === 'freeCoffee') {
+        // Reset loyalty points to 0
+        user.loyaltyPoints = 0;
+      } else {
+        // Normal coffee mark request
+        user.loyaltyPoints += 1;
+      }
 
-    return res.status(200).json({ message: 'Mark request approved' });
+      await user.save();
+      return res.status(200).json({ message: 'Request approved' });
+    }
+
+    if (action === 'reject') {
+      markRequest.status = 'rejected';
+      await markRequest.save();
+      return res.status(200).json({ message: 'Request rejected' });
+    }
+
+    return res.status(400).json({ error: 'Invalid action' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error' });

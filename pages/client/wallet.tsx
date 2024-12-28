@@ -28,7 +28,6 @@ const WalletPage: React.FC = () => {
     }
   };
 
-  // Request to spend money from wallet
   const handleRequestSpend = async () => {
     try {
       setStatus('');
@@ -36,12 +35,10 @@ const WalletPage: React.FC = () => {
       if (!token) {
         return setStatus('No token found. Please sign in.');
       }
-
       const amountNum = Number(spendAmount);
       if (!amountNum || amountNum <= 0) {
         return setStatus('Enter a valid spending amount.');
       }
-
       const { data } = await axios.post(
         '/api/wallet/requestSpend',
         { amount: amountNum },
@@ -55,32 +52,45 @@ const WalletPage: React.FC = () => {
 
   return (
     <ClientLayout>
-      <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4">My Wallet</h1>
-        <p className="text-lg mb-2">Balance: {walletBalance} shekels</p>
+      <div className="bg-white shadow-md rounded-lg p-6 space-y-6">
+        <h1 className="text-3xl font-extrabold text-gray-800">My Wallet</h1>
+        <p className="text-gray-600">Balance: 
+          <span className="font-semibold text-xl text-gray-800 ml-2">
+            {walletBalance} shekels
+          </span>
+        </p>
 
-        {/* Spend Form */}
-        <div className="mt-4">
+        <div className="bg-gray-50 rounded p-4">
           <label className="block mb-1 text-gray-700">
-            Spend Amount
+            Request to Spend:
           </label>
           <input
-            className="w-full mb-2 p-2 border border-gray-300 rounded"
             type="number"
+            className="w-full mb-2 p-2 border border-gray-300 rounded"
             value={spendAmount}
             onChange={(e) => setSpendAmount(Number(e.target.value))}
-            placeholder="Enter amount to spend"
+            placeholder="Enter amount"
           />
           <button
             onClick={handleRequestSpend}
-            className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
             Request Spend
           </button>
         </div>
 
-        {/* Status */}
-        {status && <p className="text-red-500 mt-4">{status}</p>}
+        <button
+          onClick={fetchWalletBalance}
+          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+        >
+          Refresh My Balance
+        </button>
+
+        {status && (
+          <div className="p-3 rounded bg-red-50 text-red-700 border border-red-200">
+            {status}
+          </div>
+        )}
       </div>
     </ClientLayout>
   );
