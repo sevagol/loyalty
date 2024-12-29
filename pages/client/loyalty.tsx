@@ -9,7 +9,7 @@ import Image from 'next/image';
 // Image Imports (PNG)
 // Ensure that these paths are correct and that the images exist
 import CoffeeCupImg from '@/public/dog.optimized.png';
-import FreeCoffeeImg from '@/public/dog.optimized.png';
+import FreeCoffeeImg from '@/public/gift.png';
 import DogImg from '@/public/dog.optimized.png'; // Ensure this is the correct dog image
 
 const LoyaltyPage: React.FC = () => {
@@ -114,7 +114,7 @@ const LoyaltyPage: React.FC = () => {
   const renderFreeCoffeeCircle = () => {
     const canGetFreeCoffee = loyaltyPoints >= 5;
     return (
-      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-md relative">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-md relative animate-pulse">
         {canGetFreeCoffee ? (
           <>
             {/* Main Icon */}
@@ -158,10 +158,16 @@ const LoyaltyPage: React.FC = () => {
   };
 
   return (
+    
     <ClientLayout>
         
       <div className="max-w-md mx-auto bg-[#b0aa9a] p-5 rounded shadow space-y-6">
         {/* Refresh Icon in Top-Right Corner */}
+        <div className="text-center mb-4">
+        <h1 className="text-4xl sm:text-4xl font-aouar text-[#2c2a26]">
+          Le brewji
+        </h1>
+        </div>
         <button
           onClick={handleRefresh}
           className="absolute top-4 right-4 text-[#2c2a26] hover:text-[#1a1914] focus:outline-none"
@@ -170,11 +176,11 @@ const LoyaltyPage: React.FC = () => {
         >
           <FiRefreshCcw className="w-6 h-6 sm:w-8 sm:h-8 transform hover:rotate-180 transition-transform duration-300" />
         </button>
-        <h1 className="text-2xl lg:text-3xl font-aouar text-center">Loyalty Program</h1>
+        <h1 className="text-2xl lg:text-3xl font-BigCaslon text-center">Loyalty Program</h1>
         <p className="text-center text-gray-600 text-base sm:text-lg">Every 6th coffee is free!</p>
 
         {/* <div className="text-center mt-4">
-          <strong className="text-xl sm:text-2xl font-aouar">Loyalty Marks: {loyaltyPoints}</strong>
+          <strong className="text-xl sm:text-2xl font-BigCaslon">Loyalty Marks: {loyaltyPoints}</strong>
           <p className="text-base sm:text-lg text-gray-500 mt-1">
             {loyaltyPoints < 5
               ? `You need ${5 - loyaltyPoints} more mark(s) to get a free coffee!`

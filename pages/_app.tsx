@@ -2,11 +2,11 @@
 
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import Aouar from '@/components/fonts/AouarFont';
+import BigCaslon from '@/components/fonts/AouarFont';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className={`${Aouar.variable} font-aouar`}>
+    <div className={`${BigCaslon.variable} font-BigCaslon`}>
       <Component {...pageProps} />
     </div>
   );

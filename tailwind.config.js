@@ -9,8 +9,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        'pulse-custom': 'pulseCustom 2s infinite',
+      },
+      keyframes: {
+        pulseCustom: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.1)', opacity: '0.7' },
+        },
+      },
+    
       fontFamily: {
-        aouar: ['Aouar', 'sans-serif'], // Define 'aouar' font family
+        BigCaslon: ['BigCaslon', 'sans-serif'],
+        aouar: ['Aouar', 'sans-serif'], 
       },
       colors: {
         customGray: '#d7d7d7',
