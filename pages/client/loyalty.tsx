@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ClientLayout from '@/components/ClientLayout';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiRefreshCcw, FiRefreshCw } from 'react-icons/fi';
 import Image from 'next/image';
 
 // Image Imports (PNG)
@@ -158,30 +158,33 @@ const LoyaltyPage: React.FC = () => {
 
   return (
     <ClientLayout>
-      <div className="max-w-md mx-auto bg-[#b0aa9a] p-6 rounded shadow space-y-6">
-        <h1 className="text-2xl sm:text-3xl font-aouar text-center">Loyalty Program</h1>
+        
+      <div className="max-w-md mx-auto bg-[#b0aa9a] p-5 rounded shadow space-y-6">
+        {/* Refresh Icon in Top-Right Corner */}
+        <button
+          onClick={handleRefresh}
+          className="absolute top-4 right-4 text-[#2c2a26] hover:text-[#1a1914] focus:outline-none"
+          title="Refresh Points"
+          aria-label="Refresh Points"
+        >
+          <FiRefreshCcw className="w-6 h-6 sm:w-8 sm:h-8 transform hover:rotate-180 transition-transform duration-300" />
+        </button>
+        <h1 className="text-2xl lg:text-3xl font-aouar text-center">Loyalty Program</h1>
         <p className="text-center text-gray-600 text-base sm:text-lg">Every 6th coffee is free!</p>
 
-        <div className="text-center mt-4">
+        {/* <div className="text-center mt-4">
           <strong className="text-xl sm:text-2xl font-aouar">Loyalty Marks: {loyaltyPoints}</strong>
           <p className="text-base sm:text-lg text-gray-500 mt-1">
             {loyaltyPoints < 5
               ? `You need ${5 - loyaltyPoints} more mark(s) to get a free coffee!`
               : 'You are eligible for a free coffee!'}
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center mt-6">
           {renderMarkCircles()}
           {renderFreeCoffeeCircle()}
         </div>
-
-        <button
-          onClick={handleRefresh}
-          className="w-full bg-[#847f73] hover:bg-[#6f675f] text-white py-2 rounded mt-6 font-aouar"
-        >
-          Refresh My Points
-        </button>
 
         {status && <p className="text-red-500 text-center mt-4">{status}</p>}
       </div>
