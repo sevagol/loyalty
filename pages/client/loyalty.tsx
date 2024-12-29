@@ -98,7 +98,7 @@ const LoyaltyPage: React.FC = () => {
               title="Request Coffee Mark"
               aria-label="Request Coffee Mark"
             >
-              <FiPlus className="text-xl sm:text-2xl text-blue-600" />
+              <FiPlus className="text-xl sm:text-2xl text-blue-600 transform hover:scale-110 transition-transform duration-200" />
             </div>
           ) : (
             // If it's not filled or next, just empty or placeholder
