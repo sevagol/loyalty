@@ -1,19 +1,16 @@
 // pages/client/loyalty.tsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ClientLayout from '@/components/ClientLayout';
-import dynamic from 'next/dynamic';
 import { FiPlus } from 'react-icons/fi';
+import Image from 'next/image';
 
-// Dynamic import of the Player component with SSR disabled
-const Player = dynamic(
-  () => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player),
-  { ssr: false }
-);
-
-// Importing Lottie JSON animations from the public directory
-const coffeeCup = '/lotties/coffeeCup.json';
-const freeCoffee = '/lotties/freeCoffee.json';
+// Image Imports (PNG)
+// Ensure that these paths are correct and that the images exist
+import CoffeeCupImg from '@/public/dog.optimized.png';
+import FreeCoffeeImg from '@/public/dog.optimized.png';
+import DogImg from '@/public/dog.optimized.png'; // Ensure this is the correct dog image
 
 const LoyaltyPage: React.FC = () => {
   const [status, setStatus] = useState('');
@@ -39,9 +36,6 @@ const LoyaltyPage: React.FC = () => {
     }
   };
 
-  /**
-   * Send request to either get a normal mark or a free coffee.
-   */
   const handleRequest = async (isFreeCoffee: boolean) => {
     try {
       setStatus('');
@@ -52,11 +46,11 @@ const LoyaltyPage: React.FC = () => {
 
       const { data } = await axios.post(
         '/api/loyalty/requestMark',
-        { isFreeCoffee }, // pass flag to server
+        { isFreeCoffee },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStatus(data.message);
-      await fetchUserInfo(); // Refresh points after request
+      await fetchUserInfo();
     } catch (error: any) {
       setStatus(error.response?.data?.error || 'Error requesting');
     }
@@ -68,9 +62,6 @@ const LoyaltyPage: React.FC = () => {
     setStatus('Loyalty points refreshed!');
   };
 
-  /**
-   * Render 5 circles for marks
-   */
   const renderMarkCircles = () => {
     const circles = [];
     for (let i = 1; i <= 5; i++) {
@@ -80,29 +71,38 @@ const LoyaltyPage: React.FC = () => {
       circles.push(
         <div
           key={i}
-          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 flex items-center justify-center shadow-md relative"
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-loyaltyCircleBg flex items-center justify-center shadow-md relative"
         >
           {isFilled ? (
-            // CoffeeCup Lottie if user already has this mark
-            <Player
-              autoplay
-              loop
-              src={coffeeCup}
-              style={{ width: '50px', height: '50px' }}
-            />
+            <>
+              {/* Main Icon */}
+              <Image
+                src={CoffeeCupImg}
+                alt="Coffee Cup"
+                width={32} // Adjust based on your design
+                height={32}
+                className="w-8 h-8 sm:w-10 sm:h-10"
+              />
+              {/* Centered Dog PNG */}
+              <Image
+                src={DogImg}
+                alt="Dog centered within the loyalty circle"
+                width={16} // Adjust based on your design
+                height={16}
+                className="absolute inset-0 m-auto w-4 h-4 sm:w-6 sm:h-6"
+              />
+            </>
           ) : isNext ? (
-            // Next circle: plus icon to request a new mark
-            <div
-              className="cursor-pointer flex items-center justify-center w-full h-full"
+            <button
+              className="cursor-pointer flex items-center justify-center w-full h-full focus:outline-none"
               onClick={() => handleRequest(false)}
               title="Request Coffee Mark"
               aria-label="Request Coffee Mark"
             >
-              <FiPlus className="text-xl sm:text-2xl text-blue-600 transform hover:scale-110 transition-transform duration-200" />
-            </div>
+              <FiPlus className="text-xl sm:text-2xl text-[#2c2a26] transform hover:scale-110 transition-transform duration-200" />
+            </button>
           ) : (
-            // If it's not filled or next, just empty or placeholder
-            <span className="text-gray-400 text-lg sm:text-xl">•</span>
+            <span className="text-gray-400 text-xl sm:text-2xl">•</span>
           )}
         </div>
       );
@@ -110,37 +110,45 @@ const LoyaltyPage: React.FC = () => {
     return circles;
   };
 
-  /**
-   * 6th circle: free coffee 
-   * - If loyaltyPoints < 5 => grayscale or disabled
-   * - If loyaltyPoints >= 5 => active Lottie, clickable to request free coffee
-   */
   const renderFreeCoffeeCircle = () => {
     const canGetFreeCoffee = loyaltyPoints >= 5;
     return (
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-md relative">
         {canGetFreeCoffee ? (
-          <div
-            className="cursor-pointer"
-            onClick={() => handleRequest(true)}
-            title="Get Free Coffee"
-            aria-label="Get Free Coffee"
-          >
-            <Player
-              autoplay
-              loop
-              src={freeCoffee}
-              style={{ width: '50px', height: '50px' }}
+          <>
+            {/* Main Icon */}
+            <Image
+              src={FreeCoffeeImg}
+              alt="Free Coffee"
+              width={32} // Adjust based on your design
+              height={32}
+              className="w-8 h-8 sm:w-10 sm:h-10"
             />
-          </div>
+            {/* Centered Dog PNG */}
+            <Image
+              src={DogImg}
+              alt="Dog centered within the loyalty circle"
+              width={16} // Adjust based on your design
+              height={16}
+              className="absolute inset-0 m-auto w-4 h-4 sm:w-6 sm:h-6"
+            />
+          </>
         ) : (
-          // Grayscale effect using CSS filter and reduced opacity
-          <div className="opacity-50">
-            <Player
-              autoplay
-              loop
-              src={freeCoffee}
-              style={{ width: '50px', height: '50px', filter: 'grayscale(100%)' }}
+          <div className="flex items-center justify-center w-full h-full opacity-50">
+            <Image
+              src={FreeCoffeeImg}
+              alt="Free Coffee"
+              width={32} // Adjust based on your design
+              height={32}
+              className="w-8 h-8 sm:w-10 sm:h-10 filter grayscale"
+            />
+            {/* Centered Dog PNG */}
+            <Image
+              src={DogImg}
+              alt="Dog centered within the loyalty circle"
+              width={16} // Adjust based on your design
+              height={16}
+              className="absolute inset-0 m-auto w-4 h-4 sm:w-6 sm:h-6"
             />
           </div>
         )}
@@ -150,37 +158,32 @@ const LoyaltyPage: React.FC = () => {
 
   return (
     <ClientLayout>
-      <div className="max-w-md mx-auto bg-white p-4 sm:p-6 rounded shadow space-y-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-center">Loyalty Program</h1>
-        <p className="text-center text-gray-600 text-sm sm:text-base">Every 6th coffee is free!</p>
+      <div className="max-w-md mx-auto bg-[#b0aa9a] p-6 rounded shadow space-y-6">
+        <h1 className="text-2xl sm:text-3xl font-aouar text-center">Loyalty Program</h1>
+        <p className="text-center text-gray-600 text-base sm:text-lg">Every 6th coffee is free!</p>
 
-        <div className="text-center">
-          <strong className="text-lg sm:text-xl">Loyalty Marks: {loyaltyPoints}</strong>
-          <p className="text-sm sm:text-base text-gray-500">
+        <div className="text-center mt-4">
+          <strong className="text-xl sm:text-2xl font-aouar">Loyalty Marks: {loyaltyPoints}</strong>
+          <p className="text-base sm:text-lg text-gray-500 mt-1">
             {loyaltyPoints < 5
               ? `You need ${5 - loyaltyPoints} more mark(s) to get a free coffee!`
               : 'You are eligible for a free coffee!'}
           </p>
         </div>
 
-        {/* Circles Display */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center">
-          {/* Render 5 circles for normal marks */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center mt-6">
           {renderMarkCircles()}
-          {/* 6th circle for free coffee */}
           {renderFreeCoffeeCircle()}
         </div>
 
-        {/* Refresh Button */}
         <button
           onClick={handleRefresh}
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+          className="w-full bg-[#847f73] hover:bg-[#6f675f] text-white py-2 rounded mt-6 font-aouar"
         >
           Refresh My Points
         </button>
 
-        {/* Status */}
-        {status && <p className="text-red-500 text-center mt-2">{status}</p>}
+        {status && <p className="text-red-500 text-center mt-4">{status}</p>}
       </div>
     </ClientLayout>
   );
