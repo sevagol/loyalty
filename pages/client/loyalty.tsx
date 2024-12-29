@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ClientLayout from '@/components/ClientLayout';
 import dynamic from 'next/dynamic';
-import { FiPlus } from 'react-icons/fi'; // Importing the Plus icon from React Icons
+import { FiPlus } from 'react-icons/fi';
 
 // Dynamic import of the Player component with SSR disabled
 const Player = dynamic(
@@ -56,6 +56,7 @@ const LoyaltyPage: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStatus(data.message);
+      await fetchUserInfo(); // Refresh points after request
     } catch (error: any) {
       setStatus(error.response?.data?.error || 'Error requesting');
     }
@@ -79,7 +80,7 @@ const LoyaltyPage: React.FC = () => {
       circles.push(
         <div
           key={i}
-          className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center shadow-md relative"
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 flex items-center justify-center shadow-md relative"
         >
           {isFilled ? (
             // CoffeeCup Lottie if user already has this mark
@@ -87,7 +88,7 @@ const LoyaltyPage: React.FC = () => {
               autoplay
               loop
               src={coffeeCup}
-              style={{ width: '60px', height: '60px' }}
+              style={{ width: '50px', height: '50px' }}
             />
           ) : isNext ? (
             // Next circle: plus icon to request a new mark
@@ -95,12 +96,13 @@ const LoyaltyPage: React.FC = () => {
               className="cursor-pointer flex items-center justify-center w-full h-full"
               onClick={() => handleRequest(false)}
               title="Request Coffee Mark"
+              aria-label="Request Coffee Mark"
             >
-              <FiPlus className="text-2xl text-blue-600" />
+              <FiPlus className="text-xl sm:text-2xl text-blue-600" />
             </div>
           ) : (
             // If it's not filled or next, just empty or placeholder
-            <span className="text-gray-400 text-xl">•</span>
+            <span className="text-gray-400 text-lg sm:text-xl">•</span>
           )}
         </div>
       );
@@ -116,28 +118,29 @@ const LoyaltyPage: React.FC = () => {
   const renderFreeCoffeeCircle = () => {
     const canGetFreeCoffee = loyaltyPoints >= 5;
     return (
-      <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-md relative">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-md relative">
         {canGetFreeCoffee ? (
           <div
             className="cursor-pointer"
             onClick={() => handleRequest(true)}
             title="Get Free Coffee"
+            aria-label="Get Free Coffee"
           >
             <Player
               autoplay
               loop
               src={freeCoffee}
-              style={{ width: '60px', height: '60px' }}
+              style={{ width: '50px', height: '50px' }}
             />
           </div>
         ) : (
-          // Grayscale effect using CSS filter
+          // Grayscale effect using CSS filter and reduced opacity
           <div className="opacity-50">
             <Player
               autoplay
               loop
               src={freeCoffee}
-              style={{ width: '60px', height: '60px' }}
+              style={{ width: '50px', height: '50px', filter: 'grayscale(100%)' }}
             />
           </div>
         )}
@@ -147,13 +150,13 @@ const LoyaltyPage: React.FC = () => {
 
   return (
     <ClientLayout>
-      <div className="max-w-md mx-auto bg-white p-6 rounded shadow space-y-6">
-        <h1 className="text-2xl font-bold text-center">Loyalty Program</h1>
-        <p className="text-center text-gray-600">Every 6th coffee is free!</p>
+      <div className="max-w-md mx-auto bg-white p-4 sm:p-6 rounded shadow space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-center">Loyalty Program</h1>
+        <p className="text-center text-gray-600 text-sm sm:text-base">Every 6th coffee is free!</p>
 
         <div className="text-center">
-          <strong className="text-lg">Loyalty Marks: {loyaltyPoints}</strong>
-          <p className="text-sm text-gray-500">
+          <strong className="text-lg sm:text-xl">Loyalty Marks: {loyaltyPoints}</strong>
+          <p className="text-sm sm:text-base text-gray-500">
             {loyaltyPoints < 5
               ? `You need ${5 - loyaltyPoints} more mark(s) to get a free coffee!`
               : 'You are eligible for a free coffee!'}
@@ -161,7 +164,7 @@ const LoyaltyPage: React.FC = () => {
         </div>
 
         {/* Circles Display */}
-        <div className="flex items-center justify-between mt-4 space-x-2">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center">
           {/* Render 5 circles for normal marks */}
           {renderMarkCircles()}
           {/* 6th circle for free coffee */}
