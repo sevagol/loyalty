@@ -43,19 +43,20 @@ const LoyaltyPage: React.FC = () => {
       if (!token) {
         return setStatus('No token found. Please sign in.');
       }
-
+  
       const { data } = await axios.post(
         '/api/loyalty/requestMark',
         { isFreeCoffee },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStatus(data.message);
+      alert('Your request has been received!'); // Alert added here
       await fetchUserInfo();
     } catch (error: any) {
       setStatus(error.response?.data?.error || 'Error requesting');
     }
   };
-
+  
   const handleRefresh = async () => {
     setStatus('Refreshing...');
     await fetchUserInfo();
