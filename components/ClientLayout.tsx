@@ -1,4 +1,5 @@
 // components/ClientLayout.tsx
+
 import React, { ReactNode } from 'react';
 import Link from 'next/link';
 
@@ -8,9 +9,9 @@ interface Props {
 
 export default function ClientLayout({ children }: Props) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#dcd4c0] relative">
+    <div className="min-h-screen flex flex-col relative">
       {/* Header */}
-      <header className="bg-white shadow-sm relative z-10">
+      <header className="bg-white shadow-sm z-10">
         <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/client/loyalty" className="text-xl font-bold text-gray-800">
             Loyalty Program
@@ -30,7 +31,7 @@ export default function ClientLayout({ children }: Props) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow p-8 max-w-5xl mx-auto relative z-10">
+      <main className="flex-grow flex items-center justify-center">
         {children}
       </main>
     </div>
