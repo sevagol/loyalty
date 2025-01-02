@@ -6,8 +6,7 @@ import ClientLayout from '@/components/ClientLayout';
 import { FiPlus, FiRefreshCcw } from 'react-icons/fi';
 import Image from 'next/image';
 
-// Image Imports (PNG)
-// Ensure that these paths are correct and that the images exist
+// Image Imports (Ensure paths are correct)
 import CoffeeCupImg from '@/public/dog.optimized.png'; // Replace with actual path
 import FreeCoffeeImg from '@/public/gift.png';
 import DogImg from '@/public/dog.optimized.png'; // Ensure this is the correct dog image
@@ -126,7 +125,13 @@ const LoyaltyPage: React.FC = () => {
               className="w-10 h-10 sm:w-12 sm:h-12"
             />
             {/* Centered Dog PNG */}
-            
+            <Image
+              src={DogImg}
+              alt="Dog centered within the loyalty circle"
+              width={24} // Adjust based on your design
+              height={24}
+              className="absolute inset-0 m-auto w-6 h-6 sm:w-8 sm:h-8"
+            />
           </>
         ) : (
           <div className="flex items-center justify-center w-full h-full opacity-50">
@@ -153,7 +158,7 @@ const LoyaltyPage: React.FC = () => {
 
   return (
     <ClientLayout>
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full px-4">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-5xl sm:text-6xl font-aouar text-[#2c2a26]">Le Brewji</h1>
